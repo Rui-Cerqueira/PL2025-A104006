@@ -35,7 +35,7 @@ def word_scanner(text: str, conta_final: int, reading_on: int):
     return conta_final, reading_on
 
 def main():
-    file_path = "TP1/Exemplo.txt"
+    file_path = "TPC1/Exemplo.txt"
     test_strings = read_file_to_string_array(file_path)
 
     for string in test_strings:

@@ -17,6 +17,7 @@ maq: Saldo = 60c; Pedido = 70c
 >> ...
 ...
 maq: Saldo = 74c
+>> SELECIONAR B34
 >> SAIR
 maq: Pode retirar o troco: 1x 50c, 1x 20c e 2x 2c.
 maq: Até à próxima

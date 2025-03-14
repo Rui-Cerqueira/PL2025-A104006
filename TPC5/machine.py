@@ -18,16 +18,22 @@ class machine:
         self.products = products
 
     def add_credit (self , moedas):
-        values = {"1e": 1.0, "2e": 2.0, "50c": 0.50, "20c": 0.20, "10c": 0.10, "5c": 0.5, "2c": 0.2, "1c": 0.1}
+        values = {"1e": 1.0, "2e": 2.0, "50c": 0.50, "20c": 0.20, "10c": 0.10, "5c": 0.05, "2c": 0.02, "1c": 0.01}
         for moeda in moedas:
+            moeda = moeda.replace(" ", "")
+            moeda = moeda.replace (".","")
             self.credit += values[moeda]
         print("maq: Saldo = " , self.credit)
 
     def select_product (self , cod):
-        if cod not in self.products:
-            print("maq: Produto inexistente")
-            return
-        product = self.products[cod]
+        product = None
+        for p in self.products:
+            if p.cod == cod:
+                product = p
+                break       
+        if product == None:
+            print("maq: Produto não existe")
+            return     
 
         if product.quant == 0:
             print("maq: Produto esgotado")
@@ -53,8 +59,6 @@ class machine:
         print("maq: Ate breve")
         return
 
-
-
 def json_parser (file_path):
     
     produtos = []
@@ -65,11 +69,12 @@ def json_parser (file_path):
     return produtos
         
 def interpret_input(file_path, machine):
+        
     token_specification = [
-        ('SELECIONAR' , r'>> SELECIONAR ([A-Z]\d{2})\s*$'),
-        ('MOEDA' , r'^>>\s*MOEDA\s+((?:\d+e|\d+c)(?:,\s*(?:\d+e|\d+c))*)\s*\.$'),
-        ('LISTAR' , r'>> LISTAR'),
-        ('SAIR' , r'>> SAIR')
+        ('SELECIONAR', r'>> SELECIONAR ([A-Z]\d{2})\s*$'),
+        ('MOEDA', r'^>>\s*(MOEDA)\s+((?:\d+e|\d+c)(?:\s*,\s*(?:\d+e|\d+c))*)\s*\.$'),
+        ('LISTAR', r'>> LISTAR'),
+        ('SAIR', r'>> SAIR')
     ]
 
     tok_regex = '|'.join([f'(?P<{id}>{expreg})' for (id, expreg) in token_specification])
@@ -85,15 +90,15 @@ def interpret_input(file_path, machine):
             continue
         
         if match.lastgroup == "MOEDA":
-            print(match)
-            moedas_str = match.group(1)
+            #remover do match group 0 o ">> MOEDA"
+            moedas_str = match.group(0).replace(">> MOEDA ", "")
             if moedas_str:
                 moedas = moedas_str.split(", ")
                 machine.add_credit(moedas)
             else:
                 print("maq: Erro ao capturar as moedas. Formato incorreto.")
         elif match.lastgroup == "SELECIONAR":
-            cod = match.group(1)
+            cod = match.group(0).replace (">> SELECIONAR " , "")
             machine.select_product(cod)
         elif match.lastgroup == "LISTAR":
             machine.list_products()
@@ -105,8 +110,8 @@ def main():
 
     file_path = "TPC5/stock.json"
     produtos = json_parser(file_path)
-    for product in produtos:
-        print(product.cod, product.nome, product.quant, product.preco)
+    # for product in produtos:
+    #     print(product.cod, product.nome, product.quant, product.preco)
     
     machine_instance = machine(0.0 , produtos)
     file_path = "TPC5/input.txt"

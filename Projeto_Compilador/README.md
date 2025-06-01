@@ -1,6 +1,11 @@
 # Projeto: Compilador Pascal Simplificado
 
-Etapas do Projeto
+## Realizado por:
+- A95147 - Diogo Alexandre Pereira da Costa
+- A104000 - Luis Enrique Diaz De Freitas
+- A104006 - Rui Pedro Pires de Sá Cerqueira
+
+## Etapas do Projeto
 - Análise Léxica
 - Análise Sintática
 - Geração de Código (Máquina Virtual)

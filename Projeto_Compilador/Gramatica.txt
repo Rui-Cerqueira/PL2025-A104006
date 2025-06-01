@@ -1,0 +1,112 @@
+program              ::= PROGRAM IDENTIFIER PONTOVIRGULA declaracaoFunctions declaracaoVars Corpo
+
+declaracaoFunctions  ::= declaracaoFunctions declaracaoFunction
+                       | declaracaoFunction
+                       | ε
+
+declaracaoFunction   ::= FUNCTION IDENTIFIER LPAREN argsFunction RPAREN DOISPONTOS Tipo PONTOVIRGULA declaracaoVars BEGIN Conteudo END PONTOVIRGULA
+
+argsFunction         ::= vars
+                       | ε
+
+declaracaoVars       ::= VAR vars
+                       | ε
+
+vars                 ::= vars var
+                       | var
+
+var                  ::= listaVars DOISPONTOS Tipo PONTOVIRGULA
+                       | listaVars DOISPONTOS Tipo
+                       | listaVars DOISPONTOS ARRAY LBRACKET NUMBER PONTO PONTO NUMBER RBRACKET OF Tipo PONTOVIRGULA
+
+listaVars            ::= IDENTIFIER
+                       | listaVars VIRGULA IDENTIFIER
+
+Tipo                 ::= TYPEINTEGER
+                       | TYPESTRING
+                       | TYPEBOOLEAN
+
+Corpo                ::= BEGIN Conteudo END PONTO
+                       | BEGIN Conteudo END
+
+Conteudo             ::= Conteudo Comando
+                       | Comando
+
+Comando              ::= declaracaoIf
+                       | For
+                       | While
+                       | Function
+                       | IDENTIFIER ASSIGN Valor PONTOVIRGULA
+                       | IDENTIFIER ASSIGN Valor
+                       | IDENTIFIER ASSIGN CondA1 PONTOVIRGULA
+                       | IDENTIFIER ASSIGN CondA1
+
+Identifier           ::= IDENTIFIER
+                       | IDENTIFIER LBRACKET Valor RBRACKET
+
+Valor                ::= Identifier
+                       | NUMBER
+                       | BOOLEAN
+                       | STRING
+                       | Function
+
+Function             ::= IDENTIFIER LPAREN Valores RPAREN PONTOVIRGULA
+                       | IDENTIFIER LPAREN Valores RPAREN
+                       | IDENTIFIER LPAREN RPAREN PONTOVIRGULA
+                       | IDENTIFIER LPAREN RPAREN
+
+Valores              ::= Valores VIRGULA Valor
+                       | Valor
+
+declaracaoIf         ::= IF Cond THEN Conteudo
+                       | IF Cond THEN Conteudo ELSE Conteudo
+
+Cond                 ::= CondL1
+                       | LPAREN Cond RPAREN
+
+CondL1               ::= CondL1 OR CondL2
+                       | CondL2
+                       | LPAREN CondL1 RPAREN
+
+CondL2               ::= CondL2 AND CondL3
+                       | CondL3
+                       | LPAREN CondL2 RPAREN
+
+CondL3               ::= NOT CondR1
+                       | CondR1
+                       | LPAREN CondL3 RPAREN
+
+CondR1               ::= CondA1 EQUAL CondA1
+                       | CondA1 LESS CondA1
+                       | CondA1 GREATER CondA1
+                       | CondA1 LESSEQUAL CondA1
+                       | CondA1 GREATEREQUAL CondA1
+                       | CondA1 DIFFERENT CondA1
+                       | CondA1
+                       | LPAREN CondR1 RPAREN
+
+CondA1               ::= CondA1 SUM CondA2
+                       | CondA1 SUB CondA2
+                       | CondA2
+                       | LPAREN CondA1 RPAREN
+
+CondA2               ::= CondA2 MUL CondA3
+                       | CondA2 DIVREAL CondA3
+                       | CondA2 DIV CondA3
+                       | CondA2 MOD CondA3
+                       | CondA3
+                       | LPAREN CondA2 RPAREN
+
+CondA3               ::= Valor
+                       | LPAREN CondA3 RPAREN
+
+For                  ::= FOR InicioFor TO FimFor DO BEGIN Conteudo END PONTOVIRGULA
+                       | FOR InicioFor DOWNTO FimFor DO BEGIN Conteudo END PONTOVIRGULA
+                       | FOR InicioFor TO FimFor DO Comando
+                       | FOR InicioFor DOWNTO FimFor DO Comando
+
+InicioFor            ::= Comando
+FimFor               ::= Valor
+
+While                ::= WHILE Cond DO BEGIN Conteudo END PONTOVIRGULA
+                       | WHILE Cond DO Comando

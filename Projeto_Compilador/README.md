@@ -282,4 +282,106 @@ WRITEI
 WRITELN
 STOP
 ```
+De forma a testar a robustez do programa foram efetuados testes sobre todos os exemplos, tendo sido alcançado os objetivos, no que diz respeito aos exemplos 1-6.
+### Melhorias futuras
 
+A implementação da execução de programas que possuíam sub-funções como function e procedure não foi mantida na versão final do projeto, devido ao facto de que a implementação desenvolvida quebrava outras funcionalidades do projeto, tais como os exemplos 4 e 5. No entanto, a gramática para o parsing deste tipo de programas está funcional; como por exemplo:
+
+```
+[('nome_programa', 'BinarioParaInteiro'),
+ ('functions',
+  [('nome_function', 'BinToInt'),
+   ('argsFunction', [(['bin'], 'string')]),
+   ('tipoFunction', 'integer'),
+   ('varsFunction', [(['i', 'valor', 'potencia'], 'integer')]),
+   ('corpoFunction',
+    [('atrib', 'valor', '0'),
+     ('atrib', 'potencia', '1'),
+     ('for_downto',
+      [('inicio', ('atrib', 'i', ('func', ('length', ['bin'])))),
+       ('fim', '1'),
+       ('conteudo',
+        [('if',
+          [('cond', ('rel', '=', ('array', 'bin', 'i'), '1')),
+           ('then',
+            [('atrib', 'valor', ('binop', '+', 'valor', 'potencia'))])]),
+         ('atrib', 'potencia', ('binop', '*', 'potencia', '2'))])]),
+     ('atrib', 'BinToInt', 'valor')])]),
+ ('vars', [(['bin'], 'string'), (['valor'], 'integer')]),
+ ('corpo',
+  [('func', ('writeln', ['Introduza uma string binária:'])),
+   ('func', ('readln', ['bin'])),
+   ('atrib', 'valor', ('func', ('BinToInt', ['bin']))),
+   ('func', ('writeln', ['O valor inteiro correspondente é: ', 'valor']))])]
+```
+
+A implementação do gerador de código, que não foi mantida, para a VM, dado este input, gerava o seguinte programa:
+```
+START
+JUMP main
+BinToInt:
+PUSHN 5
+STOREL 0
+PUSHI 0
+STOREG 2
+PUSHI 1
+STOREG 3
+PUSHG 0
+STRLEN
+STOREG 1
+label0:
+PUSHG 1
+PUSHI 1
+SUPEQ
+JZ label1
+PUSHG 0
+PUSHG 1
+PUSHI 1
+SUB
+CHARAT
+PUSHI 49
+EQUAL
+JZ label2
+PUSHG 2
+PUSHG 3
+ADD
+STOREG 2
+label2:
+PUSHG 3
+PUSHI 2
+MUL
+STOREG 3
+PUSHG 1
+PUSHI 1
+SUB
+STOREG 1
+JUMP label0
+label1:
+PUSHG 2
+STOREG 4
+PUSHL 1
+RETURN
+main:
+PUSHN 2
+PUSHS "Introduza uma string binária:"
+WRITES
+WRITELN
+READ
+STOREG 0
+PUSHG 0
+PUSHA BinToInt
+CALL
+STOREG 1
+PUSHS "O valor inteiro correspondente é: "
+WRITES
+PUSHG 1
+WRITEI
+WRITELN
+STOP
+```
+
+O programa dava o seguinte output, dado "10101" como input:
+```
+Introduza uma string binária:
+O valor inteiro correspondente é: 21
+```
